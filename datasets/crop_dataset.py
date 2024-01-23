@@ -9,16 +9,15 @@ from ultralytics import YOLO
 
 
 class CropDataset(Dataset):
-    def __init__(self, transform):
+    def __init__(self, file_path, transform):
         super().__init__()
 
-        for f in glob.glob(f"data/*"):
-            # 初回実行の場合は、画像をYOLOでクロップする
-            name = os.path.split(f)[1].split(".")[0]
-            if not os.path.exists(f"cropped_data/{name}"):
-                yolo(input_path=f, output_path=f"cropped_data", name=name)
+        # 画像をYOLOでクロップする
+        name = os.path.split(file_path)[1].split(".")[0]
+        if not os.path.exists(f"cropped_http_data/{name}"):
+            yolo(input_path=file_path, output_path=f"cropped_http_data", name=name)
 
-        cropped_paths = sorted(glob.glob(f"cropped_data/*"))
+        cropped_paths = sorted(glob.glob(f"cropped_http_data/{name}"))
         self.dataset = []
 
         # datasetにラベルと画像パスを追加

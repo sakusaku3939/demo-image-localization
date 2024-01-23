@@ -4,7 +4,7 @@ import torchvision.transforms as transforms
 from datasets.crop_dataset import CropDataset, collate_fn
 
 
-def load_cropped_image(batch_size, num_workers):
+def load_cropped_image(file_path, batch_size, num_workers):
     # データの前処理
     transform = transforms.Compose([
         transforms.Resize((64, 64)),
@@ -12,7 +12,7 @@ def load_cropped_image(batch_size, num_workers):
     ])
 
     # データセットの読み込み
-    dataset = CropDataset(transform)
+    dataset = CropDataset(file_path, transform)
 
     test_loader = torch.utils.data.DataLoader(
         dataset,

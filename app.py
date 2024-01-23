@@ -1,18 +1,41 @@
-from flask import Flask
+from flask import Flask, request, jsonify
+from flask_cors import CORS
+import os
 import torch
 import time
-from torch import nn
+from werkzeug.utils import secure_filename
+
 from models.YoloLSTM import YoloLSTM
 from datasets.dataset_utils import load_cropped_image
 
 tile_width = 0.45  # 1タイルの長さ (m)
 
 app = Flask(__name__)
+CORS(app)
 
 
 @app.route("/")
 def index():
     return "Hello World!"
+
+
+@app.route('/upload', methods=['POST'])
+def upload_file():
+    if 'file' not in request.files:
+        print("error 400: No file part")
+        return jsonify({"error": "No file part"}), 400
+
+    file = request.files['file']
+
+    if file.filename == '':
+        print("error 400: No selected file")
+        return jsonify({"error": "No selected file"}), 400
+
+    if file:
+        file_path = os.path.join('uploads', secure_filename(file.filename))
+        file.save(file_path)
+        result = predict_from_path(file_path)
+        return jsonify(result, 200)
 
 
 # GPUデバイスの設定
@@ -23,7 +46,7 @@ def init_device():
     return device
 
 
-def predict():
+def predict_from_path(file_path):
     torch.multiprocessing.freeze_support()
     batch_size = 1
     num_workers = 2
@@ -35,26 +58,20 @@ def predict():
     model = model.eval()
     model.load_state_dict(torch.load("models/YoloLSTM-Bi/best_model.pth"))
 
-    test_loader = load_cropped_image(batch_size, num_workers)
-    mae_function = nn.L1Loss()
+    test_loader = load_cropped_image(file_path, batch_size, num_workers)
 
     with torch.no_grad():
         model = model.eval()
 
         for i, data in enumerate(test_loader, 0):
             inputs = [d.to(device) for d in data[0]]
-            target = data[1].to(device)
 
             pred = model(inputs)
-            print(f"\n推定した座標: x: {pred.tolist()[0][0]}, y: {pred.tolist()[0][1]}")
-            print(f"正解の座標: x: {target.tolist()[0][0]}, y: {target.tolist()[0][1]}")
-            print(f"平均誤差: {mae_function(pred, target) * tile_width} m")
+            print(f"\nx: {pred.tolist()[0][0]}, y: {pred.tolist()[0][1]}")
 
     end_time = time.time()
-    print("\n")
-    print(f"1枚あたりの推定にかかった時間: {(end_time - start_time) / i} 秒")
+    return {"x": pred.tolist()[0][0], "y": pred.tolist()[0][1], "time": end_time - start_time}
 
 
 if __name__ == "__main__":
-    predict()
-    # app.run(host="0.0.0.0", debug=False)
+    app.run(host="0.0.0.0", debug=False)
