@@ -67,15 +67,22 @@ def predict_from_path(file_path):
 
     with torch.no_grad():
         model = model.eval()
+        pred = None
 
-        for i, data in enumerate(test_loader, 0):
+        for i, data in enumerate(test_loader):
             inputs = [d.to(device) for d in data[0]]
 
             pred = model(inputs)
+            print(pred)
             print(f"\nx: {pred.tolist()[0][0]}, y: {pred.tolist()[0][1]}")
 
     end_time = time.time()
-    return {"x": pred.tolist()[0][0], "y": pred.tolist()[0][1], "time": end_time - start_time}
+    if pred is not None:
+        x, y = pred.tolist()[0][0], pred.tolist()[0][1]
+    else:
+        x, y = 7, 7
+
+    return {"x": x, "y": y, "time": end_time - start_time}
 
 
 if __name__ == "__main__":
