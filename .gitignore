@@ -1,4 +1,6 @@
 venv
 cropped_data
+cropped_http_data
+uploads
 yolov8x.pt
 models/YoloLSTM-Bi/best_model.pth
