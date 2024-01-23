@@ -8,7 +8,7 @@ from werkzeug.utils import secure_filename
 from models.YoloLSTM import YoloLSTM
 from datasets.dataset_utils import load_cropped_image
 
-token = "326E5FFC-D86C-4AD9-AB7D-C887C937F21B"
+token = "62BA9128-BC63-4865-9F92-B332BB4D682C"
 tile_width = 0.45  # 1タイルの長さ (m)
 
 app = Flask(__name__)
