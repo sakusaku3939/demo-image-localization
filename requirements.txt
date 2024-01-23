@@ -1,4 +1,2 @@
 flask==3.0.1
-numpy==1.26.2
-tqdm==4.66.1
 ultralytics==8.0.222
