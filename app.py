@@ -8,6 +8,7 @@ from werkzeug.utils import secure_filename
 from models.YoloLSTM import YoloLSTM
 from datasets.dataset_utils import load_cropped_image
 
+token = "326E5FFC-D86C-4AD9-AB7D-C887C937F21B"
 tile_width = 0.45  # 1タイルの長さ (m)
 
 app = Flask(__name__)
@@ -21,6 +22,10 @@ def index():
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
+    if request.headers.get("AccessToken") != token:
+        print("error 400: Access denied")
+        return jsonify({"error": "Access denied"}), 400
+
     if 'file' not in request.files:
         print("error 400: No file part")
         return jsonify({"error": "No file part"}), 400
