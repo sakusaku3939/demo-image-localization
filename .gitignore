@@ -1,2 +1,3 @@
-data
+cropped_data
 yolov8x.pt
+models/YoloLSTM-Bi/best_model.pth
