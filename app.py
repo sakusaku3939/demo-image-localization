@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request, jsonify
 import torch
 import time
 from torch import nn
@@ -13,6 +13,24 @@ app = Flask(__name__)
 @app.route("/")
 def index():
     return "Hello World!"
+
+
+@app.route('/upload', methods=['POST'])
+def upload_file():
+    if 'file' not in request.files:
+        return jsonify({"error": "No file part"}), 400
+
+    file = request.files['file']
+
+    if file.filename == '':
+        return jsonify({"error": "No selected file"}), 400
+
+    if file:
+        # ここで画像ファイルを変数に格納する処理を行う
+        # 例えば、ファイルを保存する場合:
+        # file.save(os.path.join('uploads', secure_filename(file.filename)))
+
+        return "Hello World"  # Flutterアプリに文字列を返す
 
 
 # GPUデバイスの設定
