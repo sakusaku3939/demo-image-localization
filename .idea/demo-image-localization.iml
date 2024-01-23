@@ -7,7 +7,7 @@
     <content url="file://$MODULE_DIR$">
       <excludeFolder url="file://$MODULE_DIR$/venv" />
     </content>
-    <orderEntry type="jdk" jdkName="Python 3.12 (image-localization-server)" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="Python 3.10 (demo-image-localization)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
   <component name="TemplatesService">
